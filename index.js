@@ -2,7 +2,7 @@ const ping = require("ping");
 const {exec} = require("child_process"); //This module lets your program run system commands (like CMD/Terminal commands)
 // {exec} means that we are only taking the exec function from child_process
 console.log("Script starting");
-const phoneip = "10.23.1.39";
+const phoneip = "<enter ypur wifi IP address";
 // async function logout(){
 //     const res = await ping.promise.probe(phoneip);
 //     if(!res.alive) {
