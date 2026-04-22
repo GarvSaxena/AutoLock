@@ -2,8 +2,17 @@ const ping = require("ping");
 const iohook = require("@tkomde/iohook");
 const {exec} = require("child_process"); //This module lets your program run system commands (like CMD/Terminal commands)
 // {exec} means that we are only taking the exec function from child_process
-
+console.log("Script starting");
 const phoneip = "10.23.1.39";
+// async function logout(){
+//     const res = await ping.promise.probe(phoneip);
+//     if(!res.alive) {
+//         console.log("Phone not detected");
+//         exec("shutdown -l");
+//     }
+// }
+// const rescount = await ping.promise.probe(phoneip);
+
 let failcount = 0;
 let locked = false;
 let isIdle = false;
