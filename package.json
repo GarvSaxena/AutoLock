@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@tkomde/iohook": "^1.1.7"
+    "@tkomde/iohook": "^1.1.7",
+    "axios": "^1.15.2"
   }
 }

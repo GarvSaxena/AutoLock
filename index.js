@@ -1,8 +1,24 @@
 const ping = require("ping");
 const iohook = require("@tkomde/iohook");
 const { exec } = require("child_process");
+const axios = require("axios");
 
+const { token , chat_id } = require("./keys");
+
+const TOKEN = token;  
+const CHAT_ID = chat_id;
+async function sendMessage(msg) {
+    try {
+        await axios.post(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+            chat_id: CHAT_ID,
+            text: msg
+        });
+    } catch (err) {
+        console.log("Telegram error:", err.message);
+    }
+}
 console.log("Script starting");
+sendMessage("Script Started")
 
 const phoneip = "10.23.1.39";
 
@@ -33,7 +49,7 @@ setInterval(() => {
 
     console.log("Idle time:", idleTime);
 
-    if (idleTime > 30000) {
+    if (idleTime > 15000) {
         isIdle = true;
         console.log("User inactive");
     } else {
@@ -50,19 +66,21 @@ setInterval(async () => {
     if (!res.alive) {
         failcount++;
         console.log(`Phone not detected: ${failcount}`);
+        
     } else {
         failcount = 0;
-
+        
        
         if (!isIdle) {
             locked = false; //reset lock only when user is active again
         }
     }
-
+    if(failcount >= 3 && isIdle && !locked) sendMessage("Laptop will lock soon");
     if (failcount >= 4 && isIdle && !locked) {
         locked = true;
         console.log("Locking system...");
         exec("rundll32.exe user32.dll,LockWorkStation");
+        sendMessage("laptop Locked");
     }
 
 }, 2000);
