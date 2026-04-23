@@ -81,6 +81,48 @@ setInterval(async () => {
         console.log("Locking system...");
         exec("rundll32.exe user32.dll,LockWorkStation");
         sendMessage("laptop Locked");
+        locked = true;
     }
 
+}, 2000);
+
+let lastUpdateId = 0;
+
+setInterval(async () => {
+    try {
+        const res = await axios.get(
+            `https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${lastUpdateId + 1}`
+        );
+
+        const updates = res.data.result;
+
+        for (let update of updates) {
+            lastUpdateId = update.update_id;
+
+            const message = update.message?.text;
+            const chatId = update.message?.chat?.id;
+
+            if (!message) continue;
+
+            console.log("Received:", message);
+
+            // LOCK COMMAND
+            if (message === "Lock") {
+                exec("rundll32.exe user32.dll,LockWorkStation");
+                sendMessage("Laptop Locked");
+            }
+
+            // 📊 STATUS COMMAND
+            if (message === "status") {
+                if (locked) {
+                    sendMessage("Locked");
+                } else {
+                    sendMessage("Not locked");
+                }
+            }
+        }
+
+    } catch (err) {
+        console.log("Error:", err.message);
+    }
 }, 2000);
