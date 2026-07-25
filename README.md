@@ -1,33 +1,33 @@
-# 🔒 AutoLock
+# AutoLock
 
 **AutoLock** is a smart, automated security utility for Windows. It monitors your smartphone's Wi-Fi proximity and your PC's activity (keyboard & mouse movement) to automatically lock your workstation when you step away with your phone. It also features full remote control and status notifications via a Telegram Bot.
 
 ---
 
-## ⚙️ How It Works
+## How It Works
 
 AutoLock operates using three main mechanisms:
 
-1. **📱 Phone Proximity Detection (Ping):**
+1. **Phone Proximity Detection (Ping):**
    * AutoLock periodically pings your phone's Wi-Fi IP address.
    * If your phone disconnects or goes out of Wi-Fi range, failed ping count increases.
 
-2. **⌨️ User Inactivity Tracking (`iohook`):**
+2. **User Inactivity Tracking (`iohook`):**
    * Listens for global mouse movement and key presses to accurately measure idle time.
    * If no activity is detected for 15+ seconds, the system is marked as **Idle**.
 
-3. **🔒 Automated System Lock & Notifications:**
+3. **Automated System Lock & Notifications:**
    * **Warning:** If your phone is missing and you are idle for 3 intervals (~6 seconds), AutoLock sends a Telegram notification: `"Laptop will lock soon"`.
    * **Locking:** If your phone remains unreachable (4 failed pings) and you are idle, AutoLock locks Windows using `rundll32.exe user32.dll,LockWorkStation` and notifies your Telegram: `"laptop Locked"`.
    * **Auto Reset:** When your phone returns and user activity resumes, the lock state automatically resets.
 
-4. **🤖 Telegram Remote Control:**
+4. **Telegram Remote Control:**
    * Send **`Lock`** to your Telegram Bot to immediately lock your laptop from anywhere.
    * Send **`status`** to check whether your laptop is currently locked or unlocked.
 
 ---
 
-## 🛠️ Tech Stack & Dependencies
+## Tech Stack & Dependencies
 
 * **Node.js** (JavaScript Runtime)
 * **`ping`**: ICMP ping probing for local network phone detection
@@ -37,7 +37,7 @@ AutoLock operates using three main mechanisms:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 AutoLock/
@@ -51,7 +51,7 @@ AutoLock/
 
 ---
 
-## 🚀 Installation & Configuration
+## Installation & Configuration
 
 ### 1. Clone the Repository
 ```bash
@@ -85,7 +85,7 @@ const phoneip = "192.168.1.50"; // Replace with your phone's IP
 
 ---
 
-## 💻 How to Run
+## How to Run
 
 ### Manual Run:
 ```bash
@@ -96,11 +96,11 @@ node index.js
 
 ---
 
-## 🔄 Running AutoLock Automatically on Windows Startup
+## Running AutoLock Automatically on Windows Startup
 
 To make AutoLock start automatically when you log into Windows, choose one of the following methods:
 
-### Method 1: Windows Startup Folder (Silent / Background Run) ⭐ Recommended
+### Method 1: Windows Startup Folder (Silent / Background Run) (Recommended)
 
 1. Press `Win + R`, type `shell:startup`, and press **Enter**. This opens your Windows Startup folder.
 2. Create a new file named `autolock.vbs` in that folder.
@@ -147,7 +147,7 @@ To make AutoLock start automatically when you log into Windows, choose one of th
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Garv Saxena**
 
