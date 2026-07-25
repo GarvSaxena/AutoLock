@@ -3,11 +3,25 @@ const iohook = require("@tkomde/iohook");
 const { exec } = require("child_process");
 const axios = require("axios");
 
-const { token , chat_id } = require("./keys");
+let token = "";
+let chat_id = "";
+
+try {
+    const keys = require("./keys");
+    token = keys.token;
+    chat_id = keys.chat_id;
+} catch (err) {
+    console.error("Warning: keys.js not found or invalid. Please create keys.js using keys.example.js as a guide.");
+}
 
 const TOKEN = token;  
 const CHAT_ID = chat_id;
+
 async function sendMessage(msg) {
+    if (!TOKEN || TOKEN === "YOUR_TELEGRAM_BOT_TOKEN") {
+        console.log("Telegram notification skipped (token not set):", msg);
+        return;
+    }
     try {
         await axios.post(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
             chat_id: CHAT_ID,
@@ -17,8 +31,9 @@ async function sendMessage(msg) {
         console.log("Telegram error:", err.message);
     }
 }
+
 console.log("Script starting");
-sendMessage("Script Started")
+sendMessage("Script Started");
 
 const phoneip = "10.23.1.39";
 
@@ -54,9 +69,7 @@ setInterval(() => {
         console.log("User inactive");
     } else {
         isIdle = false;
-        
     }
-
 }, 3000);
 
 setInterval(async () => {
@@ -66,63 +79,65 @@ setInterval(async () => {
     if (!res.alive) {
         failcount++;
         console.log(`Phone not detected: ${failcount}`);
-        
     } else {
         failcount = 0;
         
-       
         if (!isIdle) {
-            locked = false; //reset lock only when user is active again
+            locked = false; // reset lock only when user is active again
         }
     }
-    if(failcount >= 3 && isIdle && !locked) sendMessage("Laptop will lock soon");
+
+    if (failcount === 3 && isIdle && !locked) {
+        sendMessage("Laptop will lock soon");
+    }
     if (failcount >= 4 && isIdle && !locked) {
         locked = true;
         console.log("Locking system...");
         exec("rundll32.exe user32.dll,LockWorkStation");
         sendMessage("laptop Locked");
-        locked = true;
     }
-
 }, 2000);
 
 let lastUpdateId = 0;
 
-setInterval(async () => {
-    try {
-        const res = await axios.get(
-            `https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${lastUpdateId + 1}`
-        );
+async function pollTelegramUpdates() {
+    if (TOKEN && TOKEN !== "YOUR_TELEGRAM_BOT_TOKEN") {
+        try {
+            const res = await axios.get(
+                `https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${lastUpdateId + 1}`
+            );
 
-        const updates = res.data.result;
+            const updates = res.data.result || [];
 
-        for (let update of updates) {
-            lastUpdateId = update.update_id;
+            for (let update of updates) {
+                lastUpdateId = update.update_id;
 
-            const message = update.message?.text;
-            const chatId = update.message?.chat?.id;
+                const message = update.message?.text;
 
-            if (!message) continue;
+                if (!message) continue;
 
-            console.log("Received:", message);
+                console.log("Received:", message);
 
-            // LOCK COMMAND
-            if (message === "Lock") {
-                exec("rundll32.exe user32.dll,LockWorkStation");
-                sendMessage("Laptop Locked");
-            }
+                // LOCK COMMAND
+                if (message === "Lock") {
+                    exec("rundll32.exe user32.dll,LockWorkStation");
+                    sendMessage("Laptop Locked");
+                }
 
-            // 📊 STATUS COMMAND
-            if (message === "status") {
-                if (locked) {
-                    sendMessage("Locked");
-                } else {
-                    sendMessage("Not locked");
+                // STATUS COMMAND
+                if (message === "status") {
+                    if (locked) {
+                        sendMessage("Locked");
+                    } else {
+                        sendMessage("Not locked");
+                    }
                 }
             }
+        } catch (err) {
+            console.log("Telegram polling error:", err.message);
         }
-
-    } catch (err) {
-        console.log("Error:", err.message);
     }
-}, 2000);
+    setTimeout(pollTelegramUpdates, 2000);
+}
+
+pollTelegramUpdates();

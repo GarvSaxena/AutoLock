@@ -13,6 +13,7 @@
   "type": "commonjs",
   "dependencies": {
     "@tkomde/iohook": "^1.1.7",
-    "axios": "^1.15.2"
+    "axios": "^1.15.2",
+    "ping": "^0.4.4"
   }
 }
